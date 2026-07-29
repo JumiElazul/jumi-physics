@@ -1,0 +1,7 @@
+{
+    "name": "jumi-physics",
+    "version-string": "0.0.1",
+    "dependencies": [
+        "raylib"
+    ]
+}

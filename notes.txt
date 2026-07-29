@@ -1,0 +1,5 @@
+An 'Entity' is an ID.
+A 'Component' is a struct of data.
+A 'System' is the logic that operates on these components.
+
+
