@@ -9,12 +9,19 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set(SOURCES
     "main.cpp"
-
-    "entity.hpp"
-    "entity.cpp"
+    
+    "entity_manager.hpp"
     "components.hpp"
-    "components.cpp"
+    "component_manager.hpp"
+    "system.hpp"
+    "system_manager.hpp"
+    "systems.hpp"
+    "systems.cpp"
+    "entity_component_system.hpp"
     "types.hpp"
+    "utils.hpp"
+    "window_handler.hpp"
+    "window_handler.cpp"
 )
 list(TRANSFORM SOURCES PREPEND "src/")
 
