@@ -1,7 +1,14 @@
 {
-    "name": "jumi-physics",
-    "version-string": "0.0.1",
-    "dependencies": [
-        "raylib"
-    ]
+  "name": "jumi-physics",
+  "version-string": "0.0.1",
+  "dependencies": [
+    "raylib"
+  ],
+  "overrides": [
+    {
+      "name": "raylib",
+      "version": "5.5"
+    }
+  ],
+  "builtin-baseline": "3c5d90a305ff00ca841f085a74a7ce74ee777dee"
 }
