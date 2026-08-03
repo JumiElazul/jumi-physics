@@ -4,7 +4,7 @@
 #include "systems.hpp"
 #include "utils.hpp"
 #include "window_handler.hpp"
-#include <algorithm>
+#include "world_bounds.hpp"
 #include <cassert>
 #include <raylib.h>
 
@@ -30,12 +30,12 @@ static threading_mode current_threading_mode = threading_mode::single;
 
 namespace {
 
-void spawn_circles(entity_component_system& ecs, const window_handler& window, size_t count) {
+void spawn_circles(entity_component_system& ecs, const world_bounds& bounds, size_t count) {
     for (size_t i = 0; i < count; ++i) {
         entity ent = ecs.create_entity();
 
-        float x = random_number(0.0f, static_cast<float>(window.params().width));
-        float y = random_number(0.0f, static_cast<float>(window.params().height));
+        float x = random_number(bounds.min_x, bounds.max_x);
+        float y = random_number(bounds.min_y, bounds.max_y);
 
         ecs.add_component<transform>(ent, transform{vec2{x, y}, vec2{x, y}});
         ecs.add_component<velocity>(
@@ -45,10 +45,12 @@ void spawn_circles(entity_component_system& ecs, const window_handler& window, s
     }
 }
 
-void draw_frame(circle_render_system* circles, rect_render_system* rects, float alpha) {
+void draw_frame(circle_render_system* circles, rect_render_system* rects,
+                const world_bounds& bounds, float alpha) {
     BeginDrawing();
     ClearBackground(BLACK);
 
+    DrawRectangle(bounds.min_x, bounds.min_y, bounds.width(), bounds.height(), RED);
     circles->update(alpha);
     rects->update(alpha);
 
@@ -80,7 +82,15 @@ int main() {
     rect_render_system* rect_render = ecs.register_system<rect_render_system>();
     ecs.set_system_signature<rect_render_system>(make_signature<transform, rect_shape>());
 
-    spawn_circles(ecs, window, 10);
+    world_bounds bounds{500, 500, 1000, 1000};
+
+    spawn_circles(ecs, bounds, 10);
+
+    Camera2D cam{};
+    cam.target = {bounds.center().y, bounds.center().y};
+    cam.offset = {GetScreenWidth() * 0.5f, GetScreenHeight() * 0.5f};
+    cam.rotation = 0.0f;
+    cam.zoom = 1.0f;
 
     fixed_timestep clock{};
 
@@ -88,10 +98,10 @@ int main() {
         clock.begin_frame(GetFrameTime());
 
         while (clock.step()) {
-            physics->update(clock.tick_rate());
+            physics->update(clock.tick_rate(), bounds);
         }
 
-        draw_frame(circle_render, rect_render, clock.alpha());
+        draw_frame(circle_render, rect_render, bounds, clock.alpha());
     }
 
     CloseWindow();

@@ -1,9 +1,10 @@
 #include "systems.hpp"
 #include "components.hpp"
 #include "entity_component_system.hpp"
+#include "world_bounds.hpp"
 #include <cmath>
 
-void physics_system::update(float step) {
+void physics_system::update(float step, const world_bounds& bounds) {
     entity_component_system& ecs = entity_component_system::instance();
 
     for (entity ent : entities) {
@@ -14,6 +15,13 @@ void physics_system::update(float step) {
 
         trans.current.x += vel.dx * step;
         trans.current.y += vel.dy * step;
+
+        if (trans.current.x < bounds.min_x || trans.current.x > bounds.max_x) {
+            vel.dx = -vel.dx;
+        }
+        if (trans.current.y < bounds.min_y || trans.current.y > bounds.max_y) {
+            vel.dy = -vel.dy;
+        }
     }
 }
 
