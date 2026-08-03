@@ -23,7 +23,7 @@ void circle_render_system::update(float alpha) {
         const transform& trans = ecs.get_component<transform>(ent);
         const circle_shape& shape = ecs.get_component<circle_shape>(ent);
 
-        vec2 pos = trans.interpolated(alpha);
+        vec2 pos = vec2::interpolated(trans.previous, trans.current, alpha);
         DrawCircleV({pos.x, pos.y}, shape.radius, shape.color);
     }
 }
@@ -34,7 +34,7 @@ void rect_render_system::update(float alpha) {
         const transform& trans = ecs.get_component<transform>(ent);
         const rect_shape& shape = ecs.get_component<rect_shape>(ent);
 
-        vec2 pos = trans.interpolated(alpha);
+        vec2 pos = vec2::interpolated(trans.previous, trans.current, alpha);
         DrawRectangleV({pos.x - shape.width * 0.5f, pos.y - shape.height * 0.5f},
                        {shape.width, shape.height}, shape.color);
     }

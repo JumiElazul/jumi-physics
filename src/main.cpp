@@ -82,7 +82,7 @@ int main() {
 
     spawn_circles(ecs, window, 10);
 
-    fixed_timestep clock{0.5f};
+    fixed_timestep clock{};
 
     while (!WindowShouldClose()) {
         clock.begin_frame(GetFrameTime());
