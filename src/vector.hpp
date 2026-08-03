@@ -47,6 +47,8 @@ struct vec2 {
         };
     }
 
+    constexpr bool operator==(const vec2&) const = default;
+
     static constexpr vec2 up() { return vec2(0.0f, 1.0f); }
     static constexpr vec2 down() { return vec2(0.0f, -1.0f); }
     static constexpr vec2 left() { return vec2(-1.0f, 0.0f); }
@@ -77,14 +79,6 @@ constexpr vec2 operator/(vec2 a, float val) {
 constexpr vec2 operator/(vec2 a, vec2 b) {
     assert(b.x != 0.0f && b.y != 0.0f && "Vec2 operator/ attempting to divide by 0.0f.");
     return vec2(a.x / b.x, a.y / b.y);
-}
-
-constexpr bool operator==(vec2 a, vec2 b) {
-    return a.x == b.x && a.y == b.y;
-}
-
-constexpr bool operator!=(vec2 a, vec2 b) {
-    return a.x != b.x || a.y != b.y;
 }
 
 static_assert(vec2(1, 2) + vec2(3, 4) == vec2(4, 6));

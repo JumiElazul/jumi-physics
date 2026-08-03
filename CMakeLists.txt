@@ -24,6 +24,7 @@ set(SOURCES
     "vector.hpp"
     "window_handler.hpp"
     "window_handler.cpp"
+    "world_bounds.hpp"
 )
 list(TRANSFORM SOURCES PREPEND "src/")
 
