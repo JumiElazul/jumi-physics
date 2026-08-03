@@ -3,32 +3,13 @@
 
 class fixed_timestep {
 public:
-    explicit fixed_timestep(float ticks_per_second = 60.0f, float max_frame_time = 0.25f)
-        : _tick_delta(1.0f / ticks_per_second)
-        , _max_frame_time(max_frame_time) {}
+    explicit fixed_timestep(float ticks_per_second = 60.0f, float max_frame_time = 0.25f);
 
-    void begin_frame(float real_dt) {
-        if (real_dt > _max_frame_time) {
-            real_dt = _max_frame_time;
-        }
-        _accumulator += real_dt;
-    }
-
-    bool step() {
-        if (_accumulator < _tick_delta) {
-            return false;
-        }
-
-        _accumulator -= _tick_delta;
-        ++_tick_count;
-        return true;
-    }
-
-    float tick_rate() const { return _tick_delta; }
-
-    float alpha() const { return _accumulator / _tick_delta; }
-
-    std::uint64_t tick_count() const { return _tick_count; }
+    void begin_frame(float real_dt);
+    [[nodiscard]] bool step() noexcept;
+    [[nodiscard]] float tick_rate() const noexcept;
+    [[nodiscard]] float alpha() const noexcept;
+    [[nodiscard]] std::uint64_t tick_count() const noexcept;
 
 private:
     float _tick_delta;

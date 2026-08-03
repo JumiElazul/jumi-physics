@@ -14,6 +14,7 @@ set(SOURCES
     "components.hpp"
     "component_manager.hpp"
     "fixed_timestep.hpp"
+    "fixed_timestep.cpp"
     "system.hpp"
     "system_manager.hpp"
     "systems.hpp"
