@@ -1,9 +1,21 @@
 #pragma once
+#include "vector.hpp"
+#include <cmath>
 #include <raylib.h>
 
 struct transform {
-    float x;
-    float y;
+    vec2 current;
+    vec2 previous;
+
+    vec2 interpolated(float t) const {
+        return {
+            std::lerp(previous.x, current.x, t),
+            std::lerp(previous.y, current.y, t),
+        };
+    }
+
+    void save() { previous = current; }
+    void place(vec2 p) { current = previous = p; }
 };
 
 struct velocity {

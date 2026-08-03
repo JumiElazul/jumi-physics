@@ -1,10 +1,64 @@
 #include "components.hpp"
 #include "entity_component_system.hpp"
+#include "fixed_timestep.hpp"
 #include "systems.hpp"
 #include "utils.hpp"
 #include "window_handler.hpp"
+#include <algorithm>
 #include <cassert>
 #include <raylib.h>
+
+enum class threading_mode {
+    single,
+    multi,
+};
+
+const char* threading_mode_tostr(threading_mode mode) {
+    switch (mode) {
+        case threading_mode::single: {
+            return "singlethreaded";
+        }
+        case threading_mode::multi: {
+            return "multithreaded";
+        }
+    }
+
+    return "";
+}
+
+static threading_mode current_threading_mode = threading_mode::single;
+
+namespace {
+
+void spawn_circles(entity_component_system& ecs, const window_handler& window, size_t count) {
+    for (size_t i = 0; i < count; ++i) {
+        entity ent = ecs.create_entity();
+
+        float x = random_number(0.0f, static_cast<float>(window.params().width));
+        float y = random_number(0.0f, static_cast<float>(window.params().height));
+
+        ecs.add_component<transform>(ent, transform{vec2{x, y}, vec2{x, y}});
+        ecs.add_component<velocity>(
+            ent, velocity{random_number(-100.0f, 100.0f), random_number(-100.0f, 100.0f)});
+        ecs.add_component<circle_shape>(ent,
+                                        circle_shape{random_number(10.0f, 40.0f), random_color()});
+    }
+}
+
+void draw_frame(circle_render_system* circles, rect_render_system* rects, float alpha) {
+    BeginDrawing();
+    ClearBackground(BLACK);
+
+    circles->update(alpha);
+    rects->update(alpha);
+
+    DrawFPS(10, 10);
+    DrawText(threading_mode_tostr(current_threading_mode), 10, 30, 20, RAYWHITE);
+
+    EndDrawing();
+}
+
+} // namespace
 
 int main() {
     window_params params;
@@ -26,38 +80,18 @@ int main() {
     rect_render_system* rect_render = ecs.register_system<rect_render_system>();
     ecs.set_system_signature<rect_render_system>(make_signature<transform, rect_shape>());
 
-    std::vector<entity> entities;
-    for (size_t i = 0; i < 10; ++i) {
-        entity ent = ecs.create_entity();
-        entities.push_back(ent);
+    spawn_circles(ecs, window, 10);
 
-        float rand_x = random_number(0.0f, static_cast<float>(window.params().width));
-        float rand_y = random_number(0.0f, static_cast<float>(window.params().height));
-        float radius = random_number(10.0f, 40.0f);
-
-        float vel_x = random_number(-100.0f, 100.0f);
-        float vel_y = random_number(-100.0f, 100.0f);
-
-        Color color = random_color();
-
-        ecs.add_component<transform>(ent, transform{rand_x, rand_y});
-        ecs.add_component<velocity>(ent, velocity{vel_x, vel_y});
-        ecs.add_component<circle_shape>(ent, circle_shape{radius, color});
-    }
+    fixed_timestep clock{0.5f};
 
     while (!WindowShouldClose()) {
-        float dt = GetFrameTime();
+        clock.begin_frame(GetFrameTime());
 
-        physics->update(dt);
+        while (clock.step()) {
+            physics->update(clock.tick_rate());
+        }
 
-        BeginDrawing();
-        ClearBackground(BLACK);
-        circle_render->update();
-        rect_render->update();
-
-        DrawFPS(10, 10);
-
-        EndDrawing();
+        draw_frame(circle_render, rect_render, clock.alpha());
     }
 
     CloseWindow();

@@ -13,6 +13,7 @@ set(SOURCES
     "entity_manager.hpp"
     "components.hpp"
     "component_manager.hpp"
+    "fixed_timestep.hpp"
     "system.hpp"
     "system_manager.hpp"
     "systems.hpp"
@@ -20,6 +21,7 @@ set(SOURCES
     "entity_component_system.hpp"
     "types.hpp"
     "utils.hpp"
+    "vector.hpp"
     "window_handler.hpp"
     "window_handler.cpp"
 )

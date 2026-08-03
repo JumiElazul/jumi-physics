@@ -4,15 +4,15 @@
 
 class physics_system : public system {
 public:
-    void update(float dt);
+    void update(float step);
 };
 
 class circle_render_system : public system {
 public:
-    void update();
+    void update(float alpha);
 };
 
 class rect_render_system : public system {
 public:
-    void update();
+    void update(float alpha);
 };
